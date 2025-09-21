@@ -21,6 +21,7 @@ Storage Format: Delta Lake for efficient querying and version control.
 Workflow:
 Auto Loader is used for incremental data loading (single file processing).
 Other files are read from the Bronze Layer, cleaned, and written to the Silver Layer.
+
 3️⃣ Data Aggregation (Gold Layer)
 Aggregation & Business Logic: Additional transformations in Databricks.
 Storage: Synapse Analytics stores processed data for querying.
