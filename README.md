@@ -1,76 +1,154 @@
-# DE-Netfliix-Project
- Azure End-To-End Data Engineering Project with netflix data
+<h1 align="center"> 🎬 Netflix End-to-End Data Engineering Project – Medallion Architecture</h1>
 
-Project Overview
-The Netflix Data Pipeline is designed to efficiently process and analyze Netflix data using Azure services. This pipeline ingests raw CSV data from GitHub and processes it through Bronze, Silver, and Gold layers to ensure structured transformation. It leverages Databricks and Delta Lake for optimized data storage and processing, while Synapse Analytics and Power BI enable real-time analysis and reporting.
+<h5 align="center">This repository demonstrates an end-to-end <b>data engineering pipeline</b> on Azure using the <b>Medallion Architecture</b> (Bronze → Silver → Gold) with Netflix data.</h5>
 
-📂 Architecture & Data Flow
+---
 
-1️⃣ Data Ingestion (Bronze Layer)
-Source: Raw Netflix dataset (CSV) stored in GitHub.
-Storage: Azure Data Lake Storage (ADLS Gen2) with separate containers (raw, bronze, silver, gold).
-Processing Tool: Azure Data Factory (ADF) orchestrates data movement.
-Pipeline Workflow:
-A ForEach loop dynamically processes files from GitHub.
-The loop extracts file_name and folder_name to copy data from GitHub to Bronze Layer in ADLS Gen2.
-The folder structure in Bronze mirrors the GitHub repository.
+<h2 align="center">🏗️ Architecture</h2>
 
-2️⃣ Data Processing (Silver Layer)
-Transformation: Databricks & PySpark perform data cleansing and normalization.
-Storage Format: Delta Lake for efficient querying and version control.
-Workflow:
-Auto Loader is used for incremental data loading (single file processing).
-Other files are read from the Bronze Layer, cleaned, and written to the Silver Layer.
+<p align="center">
+  <img src="Architecture/Architecture.png" alt="Architecture Diagram" width="600"/>
+</p>
 
-3️⃣ Data Aggregation (Gold Layer)
-Aggregation & Business Logic: Additional transformations in Databricks.
-Storage: Synapse Analytics stores processed data for querying.
-Workflow:
-Databricks Delta Live Tables (DLT) processes and loads data into Gold Layer.
-
-4️⃣ Data Visualization & Reporting
-Analysis: Synapse Analytics enables querying via SQL Pools.
-Reporting: Power BI dashboards provide real-time insights and trend analysis.
-🛠️ Technologies Used
-Azure Data Lake Storage (ADLS Gen2) – Storing raw & processed data
-Azure Data Factory (ADF) – Orchestrating data movement
-Azure Databricks – Transforming and optimizing data using PySpark
-Unity Catalog Access Control – Secure access to ADLS from Databricks
-Delta Lake – Ensuring efficient data storage and versioning
-Azure Synapse Analytics – Querying processed data
-Power BI – Visualizing and analyzing insights
-
-🚀 Implementation Steps
-
-Set up ADLS Gen2: Create storage containers (raw, bronze, silver, gold).
-Configure ADF Pipelines: Automate data ingestion from GitHub to ADLS using a ForEach loop for dynamic copying.
-Implement Access Control:
-Databricks cannot directly access ADLS.
-Created access_unity_catalog, enabling Databricks workspace to securely access ADLS.
-Develop Databricks Notebooks: Implement ETL logic for data transformation.
-Enable Delta Lake: Optimize storage and versioning of processed data.
-Load Data into Synapse Analytics: Store structured data for querying.
-Create Power BI Reports: Design dashboards for trend analysis.
-
-🔍 Key Features
-✅ Automated Data Ingestion: Seamless integration with GitHub and Azure. ✅ Layered Data Processing: Organized Bronze, Silver, Gold data architecture. ✅ Optimized Querying: Fast analytics using Delta Lake & Synapse SQL Pools. ✅ Secure Access Control: Databricks access to ADLS via Unity Catalog. ✅ Interactive Dashboards: Real-time insights via Power BI.
-
-📈 Expected Outcomes
-📊 Improved data organization with layered architecture. ⚡ Faster query performance using optimized storage. 📡 Real-time insights into Netflix viewing patterns.
+**Flow:**
+1. Data ingestion with **Azure Data Factory** into **ADLS Gen2** (Bronze).
+2. Transformation & cleaning with **Databricks (PySpark, Delta Lake)** (Silver).
+3. Business aggregation & fact/dimension modeling with **Delta Live Tables** (Gold).
 
 
-🏗️ Repository Structure
-netflix-pipeline/
-│── adf-pipeline/        # ADF JSON pipeline configuration
-│── db-workspace/        # Databricks workspace DBC files
-│── netflix-datasets/    # Source CSV files from GitHub
-│── python-scripts/      # PySpark notebooks for ETL processing
-🏗️ Setup & Deployment
-To deploy this project, follow these steps:
+---
 
-Clone the GitHub repository containing the raw Netflix dataset.
-Set up Azure resources (ADLS, ADF, Databricks, Synapse).
-Configure ADF pipelines to ingest data from GitHub.
-Develop and execute Databricks ETL notebooks.
-Implement Unity Catalog for secure access between Databricks and ADLS.
-Query processed data using Synapse SQL Pools.
+## ⚙️ Services & Tools
+- Azure Data Factory (ADF)
+- Azure Data Lake Storage Gen2
+- Azure Databricks (PySpark, Auto Loader, Delta Lake, Delta Live Tables)
+- Unity Catalog (secure access control)
+
+
+---
+
+<h2 align="center">🏗️ Architecture with Flow</h2>
+
+<p align="center">
+  <img src="Architecture/DE- Arch1.png" alt="Netflix DE Arch" width="500"/>
+</p>
+
+---
+
+## 📂 Repository Contents
+- **/adf-pipeline**: JSON exports of ADF pipelines & datasets.
+- **/db-workspace**: Databricks notebooks (ETL, DLT pipelines).
+- **/netflix-datasets**: Source CSV files from GitHub.
+- **/python-scripts**: PySpark scripts for transformations.
+- **/screenshots**: Pipeline runs, Databricks jobs, SQL outputs, dashboards.
+- **/architecture**: Architecture diagrams.
+
+---
+
+## ⚙️ Project Workflow (Detailed Steps)
+
+The project follows the **Medallion Architecture**: **Bronze → Silver → Gold**.
+
+---
+
+### 🥉 Step 1: Bronze Layer – Raw Data Ingestion
+- Source: Raw Netflix dataset (CSV) from **GitHub**.
+- Ingestion via **ADF ForEach pipeline** (dynamic file/folder handling).
+- Data stored as-is in **ADLS Gen2 Bronze container**.
+- Purpose: Immutable copy of source data for **auditing & replay**.
+
+<h3 align="center">Source Pipeline</h3>
+<p align="center">
+  <img src="Architecture/Data_source.png" alt="Source Pipeline" width="700"/>
+</p>  
+
+<h3 align="center">Sink Pipeline</h3>
+<p align="center">
+  <img src="Architecture/Github_sink.png" alt="Incremental Pipeline" width="700"/>
+</p>  
+
+---
+
+### 🥈 Step 2: Silver Layer – Data Cleaning & Transformation
+- Processing in **Databricks (PySpark)** with **Auto Loader**.
+- Transformations include:
+  - Handling missing/null values
+  - Schema standardization
+  - Data validation & cleaning
+- Stored in **ADLS Silver container** as **Delta Lake tables**.
+
+<h3 align="center">Post Transformation Data in Silver Layer</h3>
+<p align="center">
+  <img src="Architecture/Silver_notebook.png" alt="Silver Data" width="700"/>
+</p>  
+
+---
+
+### 🥇 Step 3: Gold Layer – Business Aggregation
+- Business logic applied in **Databricks (Delta Live Tables)**.
+- Joins, aggregations, and fact/dimension table creation.
+- Data written to **Azure Synapse SQL Pools** for reporting.
+
+<h3 align="center">Writing to Gold Layer</h3>
+<p align="center">
+  <img src="Architecture/Gold_layer .png" alt="Gold Write" width="700"/>
+</p>  
+
+---
+
+### 🔄 Step 4: Orchestration & Compute
+- **ADF** orchestrates pipelines (schedules, triggers, ingestion).
+- **Databricks** performs:
+  - Bronze → Silver transformations
+  - Silver → Gold aggregations (DLT pipelines, business rules)
+- **Synapse SQL** serves curated data for BI consumption.
+- **Power BI dashboards** built on Gold layer insights.
+
+<h3 align="center">Data Model Pipeline</h3>
+<p align="center">
+  <img src="Architecture/DLT_GOLD_pipeline.png" alt="Data Model Pipeline" width="700"/>
+</p>  
+
+---
+
+## 📚 Key Learnings from the Project
+Working on this end-to-end Netflix project provided hands-on exposure to **real-world Azure Data Engineering**.
+
+### 🔹 1. Azure Data Factory (ADF)
+- Built parameterized **ForEach pipelines** for dynamic ingestion.
+- Learned monitoring & debugging of pipelines.
+
+### 🔹 2. ADLS Gen2
+- Designed **layered data lake (Bronze, Silver, Gold)**.
+- Understood immutability in Bronze and schema enforcement in Silver.
+
+### 🔹 3. Databricks (PySpark, Delta, Auto Loader, DLT)
+- Implemented incremental ingestion with **Auto Loader**.
+- Built business-ready fact/dim tables with **Delta Live Tables**.
+- Applied transformations (null handling, schema evolution, deduplication).
+
+### 🔹 4. Delta Lake
+- Hands-on with ACID compliance, schema evolution & versioning.
+
+---
+
+## 📈 Expected Outcomes
+- ✅ Organized & production-ready Netflix data pipeline.
+- ✅ Faster query performance via Delta Lake & Synapse.
+- ✅ Real-time insights into Netflix trends via Power BI.
+
+---
+
+## 🏗️ Setup & Deployment
+1. Clone repo & Netflix dataset from GitHub.
+2. Create ADLS containers: **raw, bronze, silver, gold**.
+3. Configure ADF pipelines for ingestion.
+4. Develop Databricks notebooks for ETL & DLT.
+5. Enable **Unity Catalog** for secure ADLS access.
+
+
+
+---
+
+## 👤 Author
+Project implemented by **Mansi Matekar**
