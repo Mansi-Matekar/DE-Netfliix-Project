@@ -101,8 +101,7 @@ The project follows the **Medallion Architecture**: **Bronze → Silver → Gold
 - **Databricks** performs:
   - Bronze → Silver transformations
   - Silver → Gold aggregations (DLT pipelines, business rules)
-- **Synapse SQL** serves curated data for BI consumption.
-- **Power BI dashboards** built on Gold layer insights.
+
 
 <h3 align="center">Data Model Pipeline</h3>
 <p align="center">
@@ -135,7 +134,6 @@ Working on this end-to-end Netflix project provided hands-on exposure to **real-
 ## 📈 Expected Outcomes
 - ✅ Organized & production-ready Netflix data pipeline.
 - ✅ Faster query performance via Delta Lake & Synapse.
-- ✅ Real-time insights into Netflix trends via Power BI.
 
 ---
 
